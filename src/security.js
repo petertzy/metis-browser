@@ -23,8 +23,13 @@ function resolveNavigation(input) {
   return url.toString();
 }
 
+function isAllowedWebNavigation(value) {
+  if (typeof value !== 'string' || !/^https?:\/\//i.test(value)) return false;
+  return resolveNavigation(value) !== null;
+}
+
 function isAllowedNavigation(value) {
   return resolveNavigation(value) !== null;
 }
 
-module.exports = { DEFAULT_HOME, resolveNavigation, isAllowedNavigation };
+module.exports = { DEFAULT_HOME, resolveNavigation, isAllowedNavigation, isAllowedWebNavigation };
