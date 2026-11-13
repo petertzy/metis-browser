@@ -4,6 +4,7 @@ const DEFAULT_HOME = 'https://example.com/';
 
 function resolveNavigation(input) {
   if (typeof input !== 'string') return null;
+  if (/[\u0000-\u001f\u007f]/.test(input)) return null;
   const value = input.trim();
   if (!value || /[\u0000-\u0020\u007f]/.test(value)) return null;
 
