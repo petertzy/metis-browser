@@ -28,3 +28,13 @@ test('rejects non-string inputs', () => {
     assert.equal(resolveNavigation(input), null);
   }
 });
+
+test('page navigation requires explicit HTTP or HTTPS schemes', () => {
+  const { isAllowedWebNavigation } = require('../src/security');
+  for (const url of ['https://example.com/', 'http://example.com/']) {
+    assert.equal(isAllowedWebNavigation(url), true, url);
+  }
+  for (const url of ['example.com', 'javascript:alert(1)', 'file:///tmp/a', 'about:blank', 'https://example.com/\t']) {
+    assert.equal(isAllowedWebNavigation(url), false, url);
+  }
+});
