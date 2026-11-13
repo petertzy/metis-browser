@@ -8,7 +8,7 @@ function resolveNavigation(input) {
   if (!value || /[\u0000-\u0020\u007f]/.test(value)) return null;
 
   // Reject explicit non-web schemes before applying the HTTPS shorthand.
-  if (/^[a-z][a-z0-9+.-]*:/i.test(value) && !/^https?:\/\//i.test(value)) return null;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(value) && !/^https?:\/\//i.test(value) && !/^[a-z0-9.-]+:[0-9]+(?:\/|$)/i.test(value)) return null;
   if (value.startsWith('//') || value.includes('\\')) return null;
 
   let url;
