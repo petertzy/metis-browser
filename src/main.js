@@ -69,7 +69,20 @@ function createBrowser() {
     }
   });
   window.setMenuBarVisibility(false);
-  window.loadFile(path.join(__dirname, 'index.html'));
+  const uiLoaded = window.loadFile(path.join(__dirname, 'index.html'));
+  if (process.env.METIS_SMOKE_TEST === '1') {
+    uiLoaded.then(async () => {
+      const hasToolbar = await window.webContents.executeJavaScript(
+        "Boolean(document.querySelector('#address') && document.querySelector('#back') && window.metis)"
+      );
+      if (!hasToolbar) throw new Error('Toolbar or preload bridge is unavailable');
+      console.log('METIS_SMOKE_TEST_PASSED');
+      app.exit(0);
+    }).catch((error) => {
+      console.error('METIS_SMOKE_TEST_FAILED:', error.message);
+      app.exit(1);
+    });
+  }
   const browsingSession = configureSecurity();
   page = new WebContentsView({
     webPreferences: {

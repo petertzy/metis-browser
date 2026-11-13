@@ -1,0 +1,39 @@
+name: Dependency Audit
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '37 8 * * 2'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Resolve dependencies and record audit
+        shell: bash
+        run: |
+          npm install --package-lock-only --ignore-scripts
+          set +e
+          npm audit --json > npm-audit.json
+          audit_status=$?
+          set -e
+          node -e "const a=require('./npm-audit.json'); const v=a.metadata?.vulnerabilities || {}; console.log('Dependency audit:',JSON.stringify(v));"
+          echo "npm audit exit status: $audit_status" >> "$GITHUB_STEP_SUMMARY"
+          echo "Dependency findings are reported but do not yet block this experimental branch." >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: npm-dependency-audit
+          path: |
+            npm-audit.json
+            package-lock.json
+          retention-days: 14
