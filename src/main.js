@@ -1,8 +1,9 @@
 'use strict';
 
 const path = require('node:path');
-const { app, BrowserWindow, WebContentsView, ipcMain, session, shell } = require('electron');
-const { DEFAULT_HOME, resolveNavigation } = require('./security');
+const { app, BrowserWindow, WebContentsView, ipcMain, session } = require('electron');
+const { DEFAULT_HOME, resolveNavigation, isAllowedWebNavigation } = require('./security');
+const { shouldGrantPermission, shouldAllowDownload } = require('./permission-policy');
 
 let window;
 let page;
@@ -40,9 +41,15 @@ function fitPage() {
 
 function configureSecurity() {
   const browsingSession = session.fromPartition('metis:session');
-  browsingSession.setPermissionRequestHandler((_contents, _permission, callback) => callback(false));
-  browsingSession.setPermissionCheckHandler(() => false);
-  browsingSession.setWindowOpenHandler?.(() => ({ action: 'deny' }));
+  browsingSession.setPermissionRequestHandler((contents, permission, callback) => {
+    callback(shouldGrantPermission(contents.getURL(), permission));
+  });
+  browsingSession.setPermissionCheckHandler((contents, permission) => {
+    return shouldGrantPermission(contents.getURL(), permission);
+  });
+  browsingSession.on('will-download', (event, item) => {
+    if (!shouldAllowDownload(item.getURL())) event.preventDefault();
+  });
   return browsingSession;
 }
 
@@ -79,10 +86,10 @@ function createBrowser() {
   window.on('resize', fitPage);
   page.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   page.webContents.on('will-navigate', (event, url) => {
-    if (!resolveNavigation(url)) event.preventDefault();
+    if (!isAllowedWebNavigation(url)) event.preventDefault();
   });
   page.webContents.on('will-redirect', (event, url) => {
-    if (!resolveNavigation(url)) event.preventDefault();
+    if (!isAllowedWebNavigation(url)) event.preventDefault();
   });
   for (const event of ['did-navigate', 'did-navigate-in-page', 'did-start-loading', 'did-stop-loading']) {
     page.webContents.on(event, reportState);
