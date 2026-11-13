@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'">
+<title>Metis Browser</title>
+<link rel="stylesheet" href="./style.css">
+<script src="./ui.js" defer></script>
+</head>
+<body>
+<header>
+  <div class="brand" aria-label="Metis Browser">METIS</div>
+  <nav aria-label="Browser controls">
+    <button id="back" title="Back" aria-label="Back">←</button>
+    <button id="forward" title="Forward" aria-label="Forward">→</button>
+    <button id="reload" title="Reload" aria-label="Reload">↻</button>
+    <button id="home" title="Home" aria-label="Home">⌂</button>
+  </nav>
+  <form id="address-form" role="search">
+    <label for="address" class="sr-only">Web address</label>
+    <input id="address" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Enter a web address" aria-label="Web address">
+  </form>
+  <span id="status" role="status" aria-live="polite">Ready</span>
+</header>
+</body>
+</html>
