@@ -4,6 +4,7 @@ const path = require('node:path');
 const { app, BrowserWindow, WebContentsView, ipcMain, session } = require('electron');
 const { DEFAULT_HOME, resolveNavigation, isAllowedWebNavigation } = require('./security');
 const { shouldGrantPermission, shouldAllowDownload } = require('./permission-policy');
+const { isTrustedToolbarSender } = require('./ipc-policy');
 
 let window;
 let page;
@@ -123,11 +124,11 @@ app.whenReady().then(() => {
     contents.on('will-attach-webview', (event) => event.preventDefault());
   });
   ipcMain.handle('browser:navigate', (event, input) => {
-    if (!window || event.sender !== window.webContents) return false;
+    if (!window || !isTrustedToolbarSender(event, window.webContents)) return false;
     return navigate(input);
   });
   ipcMain.handle('browser:command', (event, command) => {
-    if (!window || event.sender !== window.webContents || !page) return false;
+    if (!window || !isTrustedToolbarSender(event, window.webContents) || !page) return false;
     const history = page.webContents.navigationHistory;
     switch (command) {
       case 'back':
