@@ -7,7 +7,7 @@
   "scripts": {
     "start": "electron .",
     "test": "node --test tests/*.test.js",
-    "check": "node --check src/main.js && node --check src/preload.js && node --check src/security.js && node --check src/ui.js && npm test"
+    "check": "node --check src/main.js && node --check src/preload.js && node --check src/security.js && node --check src/ipc-policy.js && node --check src/ui.js && npm test"
   },
   "engines": {
     "node": ">=20"
