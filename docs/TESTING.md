@@ -4,6 +4,12 @@
 
 Run `npm install` and `npm run check`. Tests exercise navigation validation, permission defaults, and upstream version parsing.
 
+## Cross-platform source checks
+
+The [Cross-Platform Checks workflow](../.github/workflows/cross-platform.yml) runs JavaScript syntax checks and unit tests on GitHub-hosted Windows, Linux, and macOS runners. It installs dependencies with postinstall scripts disabled to avoid unnecessary Electron binary downloads in source-only checks.
+
+**These are not native browser launch or installer tests on Windows and macOS.** Do not claim full platform support from this workflow alone.
+
 ## Desktop smoke test
 
 The Linux desktop smoke workflow starts the actual Electron process under Xvfb and verifies that the toolbar and preload bridge initialize. The application exits with a nonzero code when this check fails.
