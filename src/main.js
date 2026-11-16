@@ -3,7 +3,7 @@
 const path = require('node:path');
 const { app, BrowserWindow, WebContentsView, ipcMain, session } = require('electron');
 const { DEFAULT_HOME, resolveNavigation, isAllowedWebNavigation } = require('./security');
-const { shouldGrantPermission, shouldAllowDownload } = require('./permission-policy');
+const { installSessionSecurity } = require('./session-security');
 const { isTrustedToolbarSender } = require('./ipc-policy');
 
 let window;
@@ -42,15 +42,7 @@ function fitPage() {
 
 function configureSecurity() {
   const browsingSession = session.fromPartition('metis:session');
-  browsingSession.setPermissionRequestHandler((contents, permission, callback) => {
-    callback(shouldGrantPermission(contents.getURL(), permission));
-  });
-  browsingSession.setPermissionCheckHandler((contents, permission) => {
-    return shouldGrantPermission(contents.getURL(), permission);
-  });
-  browsingSession.on('will-download', (event, item) => {
-    if (!shouldAllowDownload(item.getURL())) event.preventDefault();
-  });
+  installSessionSecurity(browsingSession);
   return browsingSession;
 }
 
