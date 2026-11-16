@@ -29,7 +29,7 @@ jobs:
           set -e
           node -e "const a=require('./npm-audit.json'); const v=a.metadata?.vulnerabilities || {}; console.log('Dependency audit:',JSON.stringify(v));"
           echo "npm audit exit status: $audit_status" >> "$GITHUB_STEP_SUMMARY"
-          echo "Dependency findings are reported but do not yet block this experimental branch." >> "$GITHUB_STEP_SUMMARY"
+          echo "Critical and high findings fail the severity gate after artifact upload." >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:
           name: npm-dependency-audit
@@ -37,3 +37,5 @@ jobs:
             npm-audit.json
             package-lock.json
           retention-days: 14
+      - name: Enforce critical and high severity gate
+        run: node scripts/check-audit.js npm-audit.json
