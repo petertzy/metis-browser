@@ -6,7 +6,7 @@ short-lived artifacts for review. A separate severity gate fails the audit
 job if the report includes critical or high findings, or if the report
 cannot be parsed or lacks required severity counts.
 
-This is a detection gate, not a dependency fix. The repository does not
+The Electron development dependency is upgraded to the patched 45.x line\nto address the reported Electron and extract-zip high-severity advisories.\nThis is a major-version upgrade and requires runtime compatibility testing.\nThe audit gate is detection, not a substitute for ongoing remediation. The repository does not
 yet commit a reviewed lockfile, so resolution may vary across runs.
 An npm audit report also does not cover every runtime security risk,
 Electron/Chromium exploit, or malicious package behavior.
