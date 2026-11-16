@@ -13,6 +13,6 @@
     "node": ">=20"
   },
   "devDependencies": {
-    "electron": "^39.0.0"
+    "electron": "^45.3.3"
   }
 }
