@@ -23,6 +23,8 @@ jobs:
           sudo apt-get install -y xvfb libgtk-3-0 libnss3 libasound2t64 libgbm1
       - name: Install application dependencies
         run: npm install
+      - name: Download Electron runtime binary
+        run: npx --no-install install-electron --no
       - name: Configure Chromium sandbox helper
         run: |
           sudo chown root:root node_modules/electron/dist/chrome-sandbox
