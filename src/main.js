@@ -2,7 +2,8 @@
 
 const path = require('node:path');
 const { app, BrowserWindow, WebContentsView, ipcMain, session } = require('electron');
-const { DEFAULT_HOME, resolveNavigation, isAllowedWebNavigation } = require('./security');
+const { DEFAULT_HOME, resolveNavigation } = require('./security');
+const { installNavigationPolicy } = require('./navigation-policy');
 const { installSessionSecurity } = require('./session-security');
 const { isTrustedToolbarSender } = require('./ipc-policy');
 
@@ -91,12 +92,7 @@ function createBrowser() {
   fitPage();
   window.on('resize', fitPage);
   page.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
-  page.webContents.on('will-navigate', (event, url) => {
-    if (!isAllowedWebNavigation(url)) event.preventDefault();
-  });
-  page.webContents.on('will-redirect', (event, url) => {
-    if (!isAllowedWebNavigation(url)) event.preventDefault();
-  });
+  installNavigationPolicy(page.webContents);
   for (const event of ['did-navigate', 'did-navigate-in-page', 'did-start-loading', 'did-stop-loading']) {
     page.webContents.on(event, reportState);
   }
